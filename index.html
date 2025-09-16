@@ -4,25 +4,71 @@
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v7.0.0/dist/aframe-extras.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const croissant = document.querySelector("#croissant");
+        const baguette = document.querySelector("#baguette");
+
+        // Alternar entre modelos
+        const croissantModels = [
+          "https://raw.githubusercontent.com/Majo-cm/Mind-AR-2/main/Croissant.glb",
+          "https://raw.githubusercontent.com/Majo-cm/Mind-AR-2/main/Donut.glb"
+        ];
+        const baguetteModels = [
+          "https://raw.githubusercontent.com/Majo-cm/Mind-AR-2/main/Loaf%20Baguette.glb",
+          "https://raw.githubusercontent.com/Majo-cm/Mind-AR-2/main/Bread.glb"
+        ];
+
+        let croissantIndex = 0;
+        let baguetteIndex = 0;
+
+        croissant.addEventListener("click", () => {
+          croissantIndex = (croissantIndex + 1) % croissantModels.length;
+          croissant.setAttribute("gltf-model", croissantModels[croissantIndex]);
+          console.log("Croissant cambiado a:", croissantModels[croissantIndex]);
+        });
+
+        baguette.addEventListener("click", () => {
+          baguetteIndex = (baguetteIndex + 1) % baguetteModels.length;
+          baguette.setAttribute("gltf-model", baguetteModels[baguetteIndex]);
+          console.log("Baguette cambiado a:", baguetteModels[baguetteIndex]);
+        });
+      });
+    </script>
   </head>
   <body>
-    <a-scene mindar-image="imageTargetSrc: https://raw.githubusercontent.com/Majo-cm/Mind-AR-2/main/targets%20(4).mind; maxTrack: 2" color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
+    <a-scene mindar-image="imageTargetSrc: https://raw.githubusercontent.com/Majo-cm/Mind-AR-2/main/targets%20(4).mind; maxTrack: 2" 
+             color-space="sRGB" 
+             renderer="colorManagement: true, physicallyCorrectLights" 
+             vr-mode-ui="enabled: false" 
+             device-orientation-permission-ui="enabled: false">
+      
       <a-assets>
-         <img id="card" src="https://raw.githubusercontent.com/Majo-cm/Mind-AR-2/main/Panader%C3%ADa%20Vanila.png" />
-        
-        <a-asset-item id="croissantModel" src="https://raw.githubusercontent.com/Majo-cm/Mind-AR-2/main/Croissant.glb"></a-asset-item>
-        <a-asset-item id="baguetteModel" src="https://raw.githubusercontent.com/Majo-cm/Mind-AR-2/main/Loaf%20Baguette.glb"></a-asset-item>
+        <a-asset-item id="croissantModelSrc" src="https://raw.githubusercontent.com/Majo-cm/Mind-AR-2/main/Croissant.glb"></a-asset-item>
+        <a-asset-item id="baguetteModelSrc" src="https://raw.githubusercontent.com/Majo-cm/Mind-AR-2/main/Loaf%20Baguette.glb"></a-asset-item>
       </a-assets>
 
-      <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+      <!-- Cámara con cursor para clics -->
+      <a-camera position="0 0 0" look-controls="enabled: false" 
+                cursor="fuse: false; rayOrigin: mouse;" 
+                raycaster="objects: .clickable"></a-camera>
 
+      <!-- Target 0: Croissant -->
       <a-entity mindar-image-target="targetIndex: 0">
-          <a-plane src="#card" position="0 0 0" height="1" width="2" rotation="0 0 0"></a-plane>
-        <a-gltf-model rotation="0 0 0 " position="0 -0.25 0" scale="1 1 1" src="#croissantModel" animation-mixer>
+        <a-gltf-model id="croissant" class="clickable" 
+                      rotation="0 0 0" position="0 -0.25 0" scale="1 1 1" 
+                      src="#croissantModelSrc" animation-mixer>
+        </a-gltf-model>
       </a-entity>
+
+      <!-- Target 1: Baguette -->
       <a-entity mindar-image-target="targetIndex: 1">
-        <a-gltf-model rotation="0 0 0 " position="0 -0.25 0" scale="1 1 1" src="#baguetteModel" animation-mixer>
+        <a-gltf-model id="baguette" class="clickable" 
+                      rotation="0 0 0" position="0 -0.25 0" scale="1 1 1" 
+                      src="#baguetteModelSrc" animation-mixer>
+        </a-gltf-model>
       </a-entity>
+
     </a-scene>
   </body>
 </html>
