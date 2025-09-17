@@ -249,17 +249,19 @@
         // URLs de los modelos
         const croissantModels = [
             "https://raw.githubusercontent.com/Majo-cm/Mind-AR-2/main/Croissant.glb",
-            "https://raw.githubusercontent.com/Majo-cm/Mind-AR-2/main/Donut.glb"
+            "https://raw.githubusercontent.com/Majo-cm/Mind-AR-2/main/Donut.glb",
+            "https://raw.githubusercontent.com/Majo-cm/Mind-AR-2/main/Muffin.glb"
         ];
         
         const baguetteModels = [
             "https://raw.githubusercontent.com/Majo-cm/Mind-AR-2/main/Loaf%20Baguette.glb",
-            "https://raw.githubusercontent.com/Majo-cm/Mind-AR-2/main/Bread.glb"
+            "https://raw.githubusercontent.com/Majo-cm/Mind-AR-2/main/Bread.glb",
+            "https://raw.githubusercontent.com/Majo-cm/Mind-AR-2/main/Burger.glb"
         ];
 
         // Nombres para mostrar según el modelo actual
-        const croissantNames = ["Croissant", "Dona"];
-        const baguetteNames = ["Baguette", "Pan Blanco"];
+        const croissantNames = ["Croissant", "Dona", "Muffin"];
+        const baguetteNames = ["Baguette", "Pan Blanco", "Hamburguesa"];
         
         let croissantIndex = 0;
         let baguetteIndex = 0;
@@ -366,7 +368,7 @@
                         textElement.setAttribute('value', names[croissantIndex]);
                     }
                     
-                    console.log("Croissant cambiado a:", models[croissantIndex]);
+                    console.log("Modelo dulce cambiado a:", models[croissantIndex]);
                 } else {
                     baguetteIndex = (baguetteIndex + 1) % models.length;
                     gltfModel.setAttribute('src', models[baguetteIndex]);
@@ -377,17 +379,19 @@
                     }
                     
                     // Ajustar la escala para el modelo de bread (mitad del tamaño)
-                    if (baguetteIndex === 1) {
+                    if (baguetteIndex === 1) { // Pan Blanco
                         element.setAttribute('scale', '0.6 0.6 0.6');
+                    } else if (baguetteIndex === 2) { // Hamburguesa
+                        element.setAttribute('scale', '0.8 0.8 0.8');
                     } else {
-                        element.setAttribute('scale', '0.6 0.6 0.6');
+                        element.setAttribute('scale', '1.2 1.2 1.2');
                     }
                     
-                    console.log("Baguette cambiado a:", models[baguetteIndex]);
+                    console.log("Modelo salado cambiado a:", models[baguetteIndex]);
                 }
                 
-                // Restaurar escala original (excepto para bread)
-                if (!(type === 'baguette' && baguetteIndex === 1)) {
+                // Restaurar escala original (excepto para bread y hamburguesa)
+                if (!(type === 'baguette' && (baguetteIndex === 1 || baguetteIndex === 2))) {
                     element.setAttribute('animation', {
                         property: 'scale',
                         to: '1.2 1.2 1.2',
@@ -400,4 +404,4 @@
         }
     </script>
 </body>
-</html>
+</html> 
