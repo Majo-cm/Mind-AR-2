@@ -4,63 +4,72 @@
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v7.0.0/dist/aframe-extras.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
-    <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        const croissant = document.querySelector("#croissant");
-        const baguette = document.querySelector("#baguette");
-
-        // URLs de los modelos
-        const croissantModels = [
-          "url(https://raw.githubusercontent.com/Majo-cm/Mind-AR-2/main/Croissant.glb)",
-          "url(https://raw.githubusercontent.com/Majo-cm/Mind-AR-2/main/Donut.glb)"
-        ];
-        const baguetteModels = [
-          "url(https://raw.githubusercontent.com/Majo-cm/Mind-AR-2/main/Loaf%20Baguette.glb)",
-          "url(https://raw.githubusercontent.com/Majo-cm/Mind-AR-2/main/Bread.glb)"
-        ];
-
-        let croissantIndex = 0;
-        let baguetteIndex = 0;
-
-        croissant.addEventListener("click", () => {
-          croissantIndex = (croissantIndex + 1) % croissantModels.length;
-          croissant.setAttribute("gltf-model", croissantModels[croissantIndex]);
-          console.log("Croissant cambiado a:", croissantModels[croissantIndex]);
-        });
-
-        baguette.addEventListener("click", () => {
-          baguetteIndex = (baguetteIndex + 1) % baguetteModels.length;
-          baguette.setAttribute("gltf-model", baguetteModels[baguetteIndex]);
-          console.log("Baguette cambiado a:", baguetteModels[baguetteIndex]);
-        });
-      });
-    </script>
+    <style>
+      #hud-text {
+        position: absolute;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 22px;
+        font-weight: bold;
+        color: white;
+        text-shadow: 2px 2px 5px black;
+        z-index: 9999;
+        font-family: Arial, sans-serif;
+        text-align: center;
+        width: 80%;
+        padding: 10px;
+        background-color: rgba(0, 0, 0, 0.5);
+        border-radius: 10px;
+      }
+      
+      .loading-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 10000;
+        font-family: Arial, sans-serif;
+        flex-direction: column;
+      }
+      
+      .loading-spinner {
+        width: 50px;
+        height: 50px;
+        border: 5px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: white;
+        animation: spin 1s ease-in-out infinite;
+        margin-bottom: 20px;
+      }
+      
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+    </style>
   </head>
 
-  <div id="hud-text">🍞 Bienvenido a la Panadería AR 🥐 Da click en los panes para conocer los diferentes panes, a la izquierda dulces, a la derecha salados</div>
-
-  <style>
-  #hud-text {
-    position: absolute;
-    top: 10px;              /* margen desde arriba */
-    left: 50%;              /* centrado */
-    transform: translateX(-50%);
-    font-size: 22px;
-    font-weight: bold;
-    color: white;
-    text-shadow: 2px 2px 5px black; /* mejor visibilidad */
-    z-index: 9999;          /* sobre la escena */
-    font-family: Arial, sans-serif;
-  }
-  </style>
-  
   <body>
+    <div id="hud-text">🍞 Bienvenido a la Panadería AR 🥐<br>Haz click en los panes para conocer los diferentes tipos:<br>Izquierda: dulces, Derecha: salados</div>
+    
+    <div id="loading" class="loading-overlay">
+      <div class="loading-spinner"></div>
+      <div>Cargando experiencia de realidad aumentada...</div>
+    </div>
+
     <a-scene
       mindar-image="imageTargetSrc: https://raw.githubusercontent.com/Majo-cm/Mind-AR-2/main/targets%20(4).mind; maxTrack: 2"
       color-space="sRGB"
       renderer="colorManagement: true, physicallyCorrectLights"
       vr-mode-ui="enabled: false"
       device-orientation-permission-ui="enabled: false"
+      loading-screen="enabled: false"
     >
       <!-- Cámara con cursor para clicks -->
       <a-camera 
@@ -72,47 +81,113 @@
 
       <!-- Target 0: Croissant -->
       <a-entity mindar-image-target="targetIndex: 0">
-
-          <a-text 
-    value="Croissant" 
-    align="center" 
-    color="yellow" 
-    position="0 0.5 0" 
-    scale="1 1 1">
-          </a-text>
+        <a-text 
+          value="Croissant" 
+          align="center" 
+          color="yellow" 
+          position="0 0.5 0" 
+          scale="1 1 1">
+        </a-text>
         
-        <a-gltf-model
+        <a-entity
           id="croissant"
           class="clickable"
           rotation="0 0 0"
           position="0 -0.25 0"
-          scale="1 1 1"
-          gltf-model="url(https://raw.githubusercontent.com/Majo-cm/Mind-AR-2/main/Croissant.glb)"
-          animation-mixer
-        ></a-gltf-model>
+          scale="1 1 1">
+          <a-gltf-model
+            src="https://raw.githubusercontent.com/Majo-cm/Mind-AR-2/main/Croissant.glb"
+            animation-mixer
+          ></a-gltf-model>
+        </a-entity>
       </a-entity>
 
       <!-- Target 1: Baguette -->
       <a-entity mindar-image-target="targetIndex: 1">
-                 
         <a-text 
-    value="Baguette" 
-    align="center" 
-    color="orange" 
-    position="0 0.5 0" 
-    scale="1 1 1">
-       </a-text>
+          value="Baguette" 
+          align="center" 
+          color="orange" 
+          position="0 0.5 0" 
+          scale="1 1 1">
+        </a-text>
         
-        <a-gltf-model
+        <a-entity
           id="baguette"
           class="clickable"
           rotation="0 0 0"
           position="0 -0.25 0"
-          scale="1 1 1"
-          gltf-model="url(https://raw.githubusercontent.com/Majo-cm/Mind-AR-2/main/Loaf%20Baguette.glb)"
-          animation-mixer
-        ></a-gltf-model>
+          scale="1 1 1">
+          <a-gltf-model
+            src="https://raw.githubusercontent.com/Majo-cm/Mind-AR-2/main/Loaf%20Baguette.glb"
+            animation-mixer
+          ></a-gltf-model>
+        </a-entity>
       </a-entity>
+      
+      <!-- Luz ambiental -->
+      <a-light type="ambient" color="#FFF" intensity="0.5"></a-light>
+      <a-light type="directional" color="#FFF" intensity="0.5" position="2 5 5"></a-light>
     </a-scene>
+
+    <script>
+      // Esperar a que A-Frame esté completamente cargado
+      window.addEventListener('load', function() {
+        // URLs de los modelos
+        const croissantModels = [
+          "https://raw.githubusercontent.com/Majo-cm/Mind-AR-2/main/Croissant.glb",
+          "https://raw.githubusercontent.com/Majo-cm/Mind-AR-2/main/Donut.glb"
+        ];
+        
+        const baguetteModels = [
+          "https://raw.githubusercontent.com/Majo-cm/Mind-AR-2/main/Loaf%20Baguette.glb",
+          "https://raw.githubusercontent.com/Majo-cm/Mind-AR-2/main/Bread.glb"
+        ];
+
+        let croissantIndex = 0;
+        let baguetteIndex = 0;
+        
+        // Ocultar pantalla de carga cuando la escena esté lista
+        document.querySelector('a-scene').addEventListener('loaded', function() {
+          document.getElementById('loading').style.display = 'none';
+          
+          // Configurar event listeners después de que todo esté cargado
+          const scene = document.querySelector('a-scene');
+          
+          if (scene.hasLoaded) {
+            setupEventListeners();
+          } else {
+            scene.addEventListener('loaded', setupEventListeners);
+          }
+        });
+        
+        function setupEventListeners() {
+          const croissant = document.querySelector("#croissant");
+          const baguette = document.querySelector("#baguette");
+          
+          if (croissant) {
+            croissant.addEventListener('click', function() {
+              croissantIndex = (croissantIndex + 1) % croissantModels.length;
+              const gltfModel = croissant.querySelector('a-gltf-model');
+              if (gltfModel) {
+                gltfModel.setAttribute('src', croissantModels[croissantIndex]);
+                console.log("Croissant cambiado a:", croissantModels[croissantIndex]);
+              }
+            });
+          }
+          
+          if (baguette) {
+            baguette.addEventListener('click', function() {
+              baguetteIndex = (baguetteIndex + 1) % baguetteModels.length;
+              const gltfModel = baguette.querySelector('a-gltf-model');
+              if (gltfModel) {
+                gltfModel.setAttribute('src', baguetteModels[baguetteIndex]);
+                console.log("Baguette cambiado a:", baguetteModels[baguetteIndex]);
+              }
+            });
+          }
+        }
+      });
+    </script>
   </body>
 </html>
