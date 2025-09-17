@@ -1,193 +1,338 @@
-<html>
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Panadería AR</title>
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v7.0.0/dist/aframe-extras.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
     <style>
-      #hud-text {
-        position: absolute;
-        top: 10px;
-        left: 50%;
-        transform: translateX(-50%);
-        font-size: 22px;
-        font-weight: bold;
-        color: white;
-        text-shadow: 2px 2px 5px black;
-        z-index: 9999;
-        font-family: Arial, sans-serif;
-        text-align: center;
-        width: 80%;
-        padding: 10px;
-        background-color: rgba(0, 0, 0, 0.5);
-        border-radius: 10px;
-      }
-      
-      .loading-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.8);
-        color: white;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 10000;
-        font-family: Arial, sans-serif;
-        flex-direction: column;
-      }
-      
-      .loading-spinner {
-        width: 50px;
-        height: 50px;
-        border: 5px solid rgba(255, 255, 255, 0.3);
-        border-radius: 50%;
-        border-top-color: white;
-        animation: spin 1s ease-in-out infinite;
-        margin-bottom: 20px;
-      }
-      
-      @keyframes spin {
-        to { transform: rotate(360deg); }
-      }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            background: linear-gradient(135deg, #6a3093, #a044ff);
+            height: 100vh;
+        }
+        
+        #hud-text {
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+            z-index: 9999;
+            text-align: center;
+            width: 90%;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 12px;
+            backdrop-filter: blur(5px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #3a1c71, #d76d77, #ffaf7b);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #ffcc00;
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 25px;
+        }
+        
+        .loading-text {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .loading-subtext {
+            font-size: 16px;
+            text-align: center;
+            max-width: 80%;
+            line-height: 1.5;
+        }
+        
+        .instructions {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 12px 20px;
+            border-radius: 12px;
+            z-index: 9999;
+            width: 90%;
+            font-size: 16px;
+            backdrop-filter: blur(5px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        @media (max-width: 768px) {
+            #hud-text {
+                font-size: 16px;
+                padding: 10px;
+            }
+            
+            .loading-text {
+                font-size: 20px;
+            }
+            
+            .loading-subtext {
+                font-size: 14px;
+            }
+            
+            .instructions {
+                font-size: 14px;
+                padding: 10px 15px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            #hud-text {
+                font-size: 14px;
+            }
+            
+            .loading-text {
+                font-size: 18px;
+            }
+            
+            .instructions {
+                font-size: 13px;
+            }
+        }
     </style>
-  </head>
-
-  <body>
-    <div id="hud-text">🍞 Bienvenido a la Panadería AR 🥐<br>Haz click en los panes para conocer los diferentes tipos:<br>Izquierda: dulces, Derecha: salados</div>
+</head>
+<body>
+    <div id="hud-text">🍞 Bienvenido a la Panadería AR 🥐<br>Haz click o toca los panes para descubrir diferentes tipos</div>
     
-    <div id="loading" class="loading-overlay">
-      <div class="loading-spinner"></div>
-      <div>Cargando experiencia de realidad aumentada...</div>
+    <div class="loading-overlay" id="loading">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Cargando Experiencia de Realidad Aumentada</div>
+        <div class="loading-subtext">Por favor, apunta tu cámara a los marcadores de panadería cuando se te solicite</div>
+    </div>
+    
+    <div class="instructions" id="instructions" style="display: none;">
+        💡 Consejo: Para una mejor experiencia, imprime los marcadores o ábrelos en otro dispositivo
     </div>
 
     <a-scene
-      mindar-image="imageTargetSrc: https://raw.githubusercontent.com/Majo-cm/Mind-AR-2/main/targets%20(4).mind; maxTrack: 2"
-      color-space="sRGB"
-      renderer="colorManagement: true, physicallyCorrectLights"
-      vr-mode-ui="enabled: false"
-      device-orientation-permission-ui="enabled: false"
-      loading-screen="enabled: false"
+        mindar-image="imageTargetSrc: https://raw.githubusercontent.com/Majo-cm/Mind-AR-2/main/targets%20(4).mind; maxTrack: 2"
+        color-space="sRGB"
+        renderer="colorManagement: true, physicallyCorrectLights"
+        vr-mode-ui="enabled: false"
+        device-orientation-permission-ui="enabled: false"
+        loading-screen="enabled: false"
     >
-      <!-- Cámara con cursor para clicks -->
-      <a-camera 
-        position="0 0 0" 
-        look-controls="enabled: false"
-        cursor="fuse: false; rayOrigin: mouse;"
-        raycaster="objects: .clickable">
-      </a-camera>
+        <!-- Cámara con cursor para clicks -->
+        <a-camera 
+            position="0 0 0" 
+            look-controls="enabled: false"
+            cursor="fuse: false; rayOrigin: mouse;"
+            raycaster="objects: .clickable">
+        </a-camera>
 
-      <!-- Target 0: Croissant -->
-      <a-entity mindar-image-target="targetIndex: 0">
-        <a-text 
-          value="Croissant" 
-          align="center" 
-          color="yellow" 
-          position="0 0.5 0" 
-          scale="1 1 1">
-        </a-text>
-        
-        <a-entity
-          id="croissant"
-          class="clickable"
-          rotation="0 0 0"
-          position="0 -0.25 0"
-          scale="1 1 1">
-          <a-gltf-model
-            src="https://raw.githubusercontent.com/Majo-cm/Mind-AR-2/main/Croissant.glb"
-            animation-mixer
-          ></a-gltf-model>
+        <!-- Target 0: Croissant -->
+        <a-entity mindar-image-target="targetIndex: 0">
+            <a-text 
+                value="Croissant" 
+                align="center" 
+                color="yellow" 
+                position="0 0.5 0" 
+                scale="1.5 1.5 1.5"
+                width="3">
+            </a-text>
+            
+            <a-entity
+                id="croissant"
+                class="clickable"
+                rotation="0 0 0"
+                position="0 -0.25 0"
+                scale="1.2 1.2 1.2">
+                <a-gltf-model
+                    src="https://raw.githubusercontent.com/Majo-cm/Mind-AR-2/main/Croissant.glb"
+                    animation-mixer="loop: repeat"
+                ></a-gltf-model>
+            </a-entity>
         </a-entity>
-      </a-entity>
 
-      <!-- Target 1: Baguette -->
-      <a-entity mindar-image-target="targetIndex: 1">
-        <a-text 
-          value="Baguette" 
-          align="center" 
-          color="orange" 
-          position="0 0.5 0" 
-          scale="1 1 1">
-        </a-text>
-        
-        <a-entity
-          id="baguette"
-          class="clickable"
-          rotation="0 0 0"
-          position="0 -0.25 0"
-          scale="1 1 1">
-          <a-gltf-model
-            src="https://raw.githubusercontent.com/Majo-cm/Mind-AR-2/main/Loaf%20Baguette.glb"
-            animation-mixer
-          ></a-gltf-model>
+        <!-- Target 1: Baguette -->
+        <a-entity mindar-image-target="targetIndex: 1">
+            <a-text 
+                value="Baguette" 
+                align="center" 
+                color="orange" 
+                position="0 0.5 0" 
+                scale="1.5 1.5 1.5"
+                width="3">
+            </a-text>
+            
+            <a-entity
+                id="baguette"
+                class="clickable"
+                rotation="0 0 0"
+                position="0 -0.25 0"
+                scale="1.2 1.2 1.2">
+                <a-gltf-model
+                    src="https://raw.githubusercontent.com/Majo-cm/Mind-AR-2/main/Loaf%20Baguette.glb"
+                    animation-mixer="loop: repeat"
+                ></a-gltf-model>
+            </a-entity>
         </a-entity>
-      </a-entity>
-      
-      <!-- Luz ambiental -->
-      <a-light type="ambient" color="#FFF" intensity="0.5"></a-light>
-      <a-light type="directional" color="#FFF" intensity="0.5" position="2 5 5"></a-light>
+        
+        <!-- Luz ambiental -->
+        <a-light type="ambient" color="#FFF" intensity="0.7"></a-light>
+        <a-light type="directional" color="#FFF" intensity="0.5" position="2 5 5"></a-light>
+        
+        <!-- Efecto de ambiente -->
+        <a-entity environment="preset: default; groundColor: #445; grid: none"></a-entity>
     </a-scene>
 
     <script>
-      // Esperar a que A-Frame esté completamente cargado
-      window.addEventListener('load', function() {
         // URLs de los modelos
         const croissantModels = [
-          "https://raw.githubusercontent.com/Majo-cm/Mind-AR-2/main/Croissant.glb",
-          "https://raw.githubusercontent.com/Majo-cm/Mind-AR-2/main/Donut.glb"
+            "https://raw.githubusercontent.com/Majo-cm/Mind-AR-2/main/Croissant.glb",
+            "https://raw.githubusercontent.com/Majo-cm/Mind-AR-2/main/Donut.glb"
         ];
         
         const baguetteModels = [
-          "https://raw.githubusercontent.com/Majo-cm/Mind-AR-2/main/Loaf%20Baguette.glb",
-          "https://raw.githubusercontent.com/Majo-cm/Mind-AR-2/main/Bread.glb"
+            "https://raw.githubusercontent.com/Majo-cm/Mind-AR-2/main/Loaf%20Baguette.glb",
+            "https://raw.githubusercontent.com/Majo-cm/Mind-AR-2/main/Bread.glb"
         ];
 
         let croissantIndex = 0;
         let baguetteIndex = 0;
         
-        // Ocultar pantalla de carga cuando la escena esté lista
-        document.querySelector('a-scene').addEventListener('loaded', function() {
-          document.getElementById('loading').style.display = 'none';
-          
-          // Configurar event listeners después de que todo esté cargado
-          const scene = document.querySelector('a-scene');
-          
-          if (scene.hasLoaded) {
-            setupEventListeners();
-          } else {
-            scene.addEventListener('loaded', setupEventListeners);
-          }
+        // Esperar a que A-Frame esté completamente cargado
+        window.addEventListener('load', function() {
+            const scene = document.querySelector('a-scene');
+            
+            // Ocultar pantalla de carga cuando la escena esté lista
+            if (scene.hasLoaded) {
+                hideLoading();
+            } else {
+                scene.addEventListener('loaded', hideLoading);
+            }
+            
+            // Configurar event listeners después de que todo esté cargado
+            scene.addEventListener('loaded', function() {
+                setTimeout(setupEventListeners, 1000);
+                document.getElementById('instructions').style.display = 'block';
+            });
         });
         
-        function setupEventListeners() {
-          const croissant = document.querySelector("#croissant");
-          const baguette = document.querySelector("#baguette");
-          
-          if (croissant) {
-            croissant.addEventListener('click', function() {
-              croissantIndex = (croissantIndex + 1) % croissantModels.length;
-              const gltfModel = croissant.querySelector('a-gltf-model');
-              if (gltfModel) {
-                gltfModel.setAttribute('src', croissantModels[croissantIndex]);
-                console.log("Croissant cambiado a:", croissantModels[croissantIndex]);
-              }
-            });
-          }
-          
-          if (baguette) {
-            baguette.addEventListener('click', function() {
-              baguetteIndex = (baguetteIndex + 1) % baguetteModels.length;
-              const gltfModel = baguette.querySelector('a-gltf-model');
-              if (gltfModel) {
-                gltfModel.setAttribute('src', baguetteModels[baguetteIndex]);
-                console.log("Baguette cambiado a:", baguetteModels[baguetteIndex]);
-              }
-            });
-          }
+        function hideLoading() {
+            document.getElementById('loading').style.display = 'none';
         }
-      });
+        
+        function setupEventListeners() {
+            const croissant = document.querySelector("#croissant");
+            const baguette = document.querySelector("#baguette");
+            
+            if (croissant) {
+                // Para dispositivos táctiles
+                croissant.addEventListener('touchstart', function(e) {
+                    e.preventDefault();
+                    changeModel(croissant, croissantModels, 'croissant');
+                });
+                
+                // Para dispositivos con mouse
+                croissant.addEventListener('click', function() {
+                    changeModel(croissant, croissantModels, 'croissant');
+                });
+            }
+            
+            if (baguette) {
+                // Para dispositivos táctiles
+                baguette.addEventListener('touchstart', function(e) {
+                    e.preventDefault();
+                    changeModel(baguette, baguetteModels, 'baguette');
+                });
+                
+                // Para dispositivos con mouse
+                baguette.addEventListener('click', function() {
+                    changeModel(baguette, baguetteModels, 'baguette');
+                });
+            }
+            
+            // Añadir vibración en dispositivos móviles si está disponible
+            if ('vibrate' in navigator) {
+                document.querySelectorAll('.clickable').forEach(element => {
+                    element.addEventListener('touchstart', function() {
+                        navigator.vibrate(10);
+                    });
+                });
+            }
+        }
+        
+        function changeModel(element, models, type) {
+            const gltfModel = element.querySelector('a-gltf-model');
+            if (!gltfModel) return;
+            
+            // Añadir animación de escala al hacer click/toque
+            element.setAttribute('animation', {
+                property: 'scale',
+                to: '1.5 1.5 1.5',
+                dur: 200,
+                easing: 'easeOutElastic',
+                loop: 0
+            });
+            
+            setTimeout(() => {
+                if (type === 'croissant') {
+                    croissantIndex = (croissantIndex + 1) % models.length;
+                    gltfModel.setAttribute('src', models[croissantIndex]);
+                    console.log("Croissant cambiado a:", models[croissantIndex]);
+                } else {
+                    baguetteIndex = (baguetteIndex + 1) % models.length;
+                    gltfModel.setAttribute('src', models[baguetteIndex]);
+                    console.log("Baguette cambiado a:", models[baguetteIndex]);
+                }
+                
+                // Restaurar escala original
+                element.setAttribute('animation', {
+                    property: 'scale',
+                    to: '1.2 1.2 1.2',
+                    dur: 300,
+                    easing: 'easeOutElastic',
+                    loop: 0
+                });
+            }, 200);
+        }
     </script>
-  </body>
+</body>
 </html>
