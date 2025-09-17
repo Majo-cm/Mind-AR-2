@@ -81,23 +81,6 @@
             line-height: 1.5;
         }
         
-        .instructions {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: white;
-            text-align: center;
-            background: rgba(0, 0, 0, 0.6);
-            padding: 12px 20px;
-            border-radius: 12px;
-            z-index: 9999;
-            width: 90%;
-            font-size: 16px;
-            backdrop-filter: blur(5px);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-        }
-        
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
@@ -115,24 +98,16 @@
             .loading-subtext {
                 font-size: 14px;
             }
-            
-            .instructions {
-                font-size: 14px;
-                padding: 10px 15px;
-            }
         }
         
         @media (max-width: 480px) {
             #hud-text {
                 font-size: 14px;
+                top: 10px;
             }
             
             .loading-text {
                 font-size: 18px;
-            }
-            
-            .instructions {
-                font-size: 13px;
             }
         }
     </style>
@@ -144,10 +119,6 @@
         <div class="loading-spinner"></div>
         <div class="loading-text">Cargando Experiencia de Realidad Aumentada</div>
         <div class="loading-subtext">Por favor, apunta tu cámara a los marcadores de panadería cuando se te solicite</div>
-    </div>
-    
-    <div class="instructions" id="instructions" style="display: none;">
-        💡 Consejo: Para una mejor experiencia, imprime los marcadores o ábrelos en otro dispositivo
     </div>
 
     <a-scene
@@ -251,7 +222,6 @@
             // Configurar event listeners después de que todo esté cargado
             scene.addEventListener('loaded', function() {
                 setTimeout(setupEventListeners, 1000);
-                document.getElementById('instructions').style.display = 'block';
             });
         });
         
@@ -336,3 +306,4 @@
     </script>
 </body>
 </html>
+           
