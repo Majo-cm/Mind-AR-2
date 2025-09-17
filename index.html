@@ -5,6 +5,25 @@
     <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v7.0.0/dist/aframe-extras.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
   </head>
+
+<div id="hud-text">🍞 Bienvenido a la Panadería AR 🥐 Click en los panes para conocer los diferentes panes, a la derecha dulces, a la izquierda salados</div>
+
+<style>
+  #hud-text {
+    position: absolute;
+    top: 10px;              /* margen desde arriba */
+    left: 50%;              /* centrado */
+    transform: translateX(-50%);
+    font-size: 22px;
+    font-weight: bold;
+    color: white;
+    text-shadow: 2px 2px 5px black; /* mejor visibilidad */
+    z-index: 9999;          /* sobre la escena */
+    font-family: Arial, sans-serif;
+  }
+</style>
+
+  
   <body>
     <a-scene
       mindar-image="imageTargetSrc: https://raw.githubusercontent.com/Majo-cm/Mind-AR-2/main/targets%20(4).mind; maxTrack: 2"
